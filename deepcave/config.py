@@ -84,5 +84,6 @@ class Config:
         from deepcave.runs.converters.bohb import BOHBRun
         from deepcave.runs.converters.deepcave import DeepCAVERun
         from deepcave.runs.converters.smac import SMACRun
+        from deepcave.runs.converters.dehb import DEHBRun
 
-        return [DeepCAVERun, BOHBRun, SMACRun]
+        return [DeepCAVERun, BOHBRun, SMACRun, DEHBRun]
