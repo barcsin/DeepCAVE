@@ -24,7 +24,7 @@ class CostOverTime(DynamicPlugin):
     help = "docs/plugins/cost_over_time.rst"
 
     def check_runs_compatibility(self, runs: List[AbstractRun]) -> None:
-        check_equality(runs, objectives=True, budgets=True)
+        check_equality(runs, meta=False, objectives=True, budgets=True)
 
         # Set some attributes here
         run = runs[0]
