@@ -16,7 +16,7 @@ from ConfigSpace.hyperparameters import (
 from sklearn.decomposition import PCA
 from sklearn.exceptions import NotFittedError
 from sklearn.preprocessing import MinMaxScaler
-from smac.epm.util_funcs import get_types
+from smac.epm.utils import get_types
 
 VERY_SMALL_NUMBER = 1e-10
 PYRFR_MAPPING = {
@@ -367,7 +367,8 @@ class RandomForest:
             all_preds = []
             third_dimension = 0
 
-            # Gather data in a list of 2d arrays and get statistics about the required size of the 3d array
+            # Gather data in a list of 2d arrays and get statistics
+            # about the required size of the 3d array
             for row_X in X:
                 preds_per_tree = self._model.all_leaf_values(row_X)
                 all_preds.append(preds_per_tree)
