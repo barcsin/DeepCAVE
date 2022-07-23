@@ -15,10 +15,6 @@ import ConfigSpace as CS
 import ConfigSpace.hyperparameters as CSH
 
 
-OP_NAMES = ["Identity", "Zero", "ReLUConvBN3x3", "ReLUConvBN1x1", "AvgPool3x3"]
-nasbench201_params = ['op_0', 'op_1', 'op_2', 'op_3', 'op_4', 'op_5']
-
-
 def parse_config(filename: Optional[str] = None) -> Config:
     """
     Parses the config given the filename. Both relative and absolute paths are possible.
@@ -72,12 +68,50 @@ def parse_config(filename: Optional[str] = None) -> Config:
     return config
 
 
+def _nasbench201_parameters():
+    """
+    Get nasbench201 specific parameters. Returns the parameters needed to convert between ConfigSpace and nasbench201.
+
+    :return: OP_NAMES: list, nasbench201_params: list
+    """
+    OP_NAMES = ["Identity", "Zero", "ReLUConvBN3x3", "ReLUConvBN1x1", "AvgPool3x3"]
+    nasbench201_params = ['op_0', 'op_1', 'op_2', 'op_3', 'op_4', 'op_5']
+    return OP_NAMES, nasbench201_params
+
+
+def optimal_nasbench201_performance():
+    """
+    Returns the best possible performance that can be reached with the trained architectures on nasbench201.
+    This includes validation, and test accuracy for all datasets that are defined for this benchmark. Namely, cifar10,
+    cifar100, and Imagenet.
+
+    Example:
+        To get the best possible validation accuracy on cifar10 with nasbench201 use the key 'cifar10_val_acc' with the
+        dictionary returned by this function
+
+    :return: dictionary of optimal results
+    """
+    # The following optimal results are the mean optimal results, so it is not a good upper limit for accuracy
+    # nasbenc201_optimal_results = {
+    #     "cifar10_val_acc": 91.61, "cifar10_test_acc": 94.37,
+    #     "cifar100_val_acc": 73.49, "cifar100_test_acc": 73.51,
+    #     "imgnet_val_acc": 46.77, "imgnet_test_acc": 47.31,
+    # }
+    nasbenc201_optimal_results = {
+        "cifar10_val_acc": 100, "cifar10_test_acc": 100,
+        "cifar100_val_acc": 100, "cifar100_test_acc": 100,
+        "imgnet_val_acc": 100, "imgnet_test_acc": 100,
+    }
+    return nasbenc201_optimal_results
+
+
 def configure_nasbench201():
     """
     Creates the ConfigSpace for NAS-Bench-201
 
     :return: ConfigSpace object for the NAS-Bench-201 search space
     """
+    OP_NAMES, nasbench201_params = _nasbench201_parameters()
     cs = CS.ConfigurationSpace()
     op_0 = CSH.CategoricalHyperparameter(nasbench201_params[0], choices=OP_NAMES)
     op_1 = CSH.CategoricalHyperparameter(nasbench201_params[1], choices=OP_NAMES)
@@ -97,7 +131,8 @@ def configuration2op_indices(config):
     :param config: a sample NAS-Bench-201 configuration sampled from the ConfigSpace
     :return: operation indices
     """
-    print(config)
+    OP_NAMES, nasbench201_params = _nasbench201_parameters()
+
     op_indices = np.ones(len(nasbench201_params)) * -1
     for idx, param in enumerate(nasbench201_params):
         op_indices[idx] = OP_NAMES.index(config[param])
@@ -111,15 +146,15 @@ def op_indices2config(op_indices: Union[List[Union[int, str]], str]) -> Configur
     :param op_indices: Iterable of operation indices
     :return: The configuration object corresponding to the op_indices
     """
+    OP_NAMES, nasbench201_params = _nasbench201_parameters()
+
     if isinstance(op_indices, str):
         op_indices = list(op_indices)
 
     cs = configure_nasbench201()
 
     values = {nasbench201_params[idx]: OP_NAMES[int(value)] for idx, value in enumerate(op_indices)}
-    print(values)
     config = Configuration(configuration_space=cs, values=values)
     config.is_valid_configuration()
 
     return config
-
