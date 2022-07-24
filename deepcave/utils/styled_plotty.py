@@ -71,6 +71,10 @@ def get_color(id_: int, alpha: float = 1) -> Union[str, Tuple[float, float, floa
     """
     Currently (Plotly version 5.3.1) there are 10 possible colors.
     """
+    if id_ >= len(px.colors.qualitative.Plotly):
+        print("Plotly ran out of colors. Some graphs will have the same color.")
+        id_ %= len(px.colors.qualitative.Plotly)
+
     color = px.colors.qualitative.Plotly[id_]
 
     r, g, b = hex_to_rgb(color)
