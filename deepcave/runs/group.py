@@ -20,8 +20,10 @@ class Group(AbstractRun):
             return
 
         try:
-            attributes = check_equality(self.runs)
-            self.meta = attributes["meta"]
+            # Skip checking meta equality
+            # Throws NotMergeableError
+            attributes = check_equality(self.runs, meta=False)
+            self.meta = runs[0].get_meta()
             self.configspace = attributes["configspace"]
             self.objectives = attributes["objectives"]
             self.budgets = attributes["budgets"]

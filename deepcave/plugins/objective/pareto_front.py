@@ -24,7 +24,7 @@ class ParetoFront(DynamicPlugin):
     help = "docs/plugins/pareto_front.rst"
 
     def check_runs_compatibility(self, runs):
-        check_equality(runs, objectives=True, budgets=True)
+        check_equality(runs, objectives=True, budgets=True, meta=False)
 
         # Set some attributes here
         run = runs[0]

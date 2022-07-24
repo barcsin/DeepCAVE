@@ -1,5 +1,7 @@
-import json
+# Currently to get this converter to work with deepCAVE we need to put this file into deepcave/runs/converters
+# then in deepcave/config.py import the NASLibRun class and add it to the list in CONVERTERS property
 from pathlib import Path
+import json
 
 from deepcave.runs import Status
 from deepcave.runs.objective import Objective
@@ -41,11 +43,14 @@ class NASLibRun(Run):
 
         configspace = configspace_dict[search_space]()
 
-        obj1 = Objective("Train regret", lower=0, upper=100)
-        obj2 = Objective("Validation regret", lower=0, upper=100)
-        obj3 = Objective("Test regret", lower=0, upper=100)
-        obj4 = Objective("Train time", lower=0)
-        objectives = [obj1, obj2, obj3, obj4]
+        obj1 = Objective("Train loss", lower=0)
+        obj2 = Objective("Validation loss", lower=0)
+        obj3 = Objective("Test loss", lower=0)
+        obj4 = Objective("Train regret", lower=0, upper=100)
+        obj5 = Objective("Validation regret", lower=0, upper=100)
+        obj6 = Objective("Test regret", lower=0, upper=100)
+        obj7 = Objective("Train time", lower=0)
+        objectives = [obj1, obj2, obj3, obj4, obj5, obj6, obj7]
 
         config.update(config.pop('search'))
 
@@ -58,11 +63,14 @@ class NASLibRun(Run):
         end_time = 0.0
 
         for index in range(config['epochs']):
-            train_regret = 100 - float(errors_dict['train_acc'][index])
-            valid_regret = 100 - float(errors_dict['valid_acc'][index])
-            test_regret = 100 - float(errors_dict['test_acc'][index])
-            train_time = float(errors_dict['train_time'][index])
-            runtime = float(errors_dict['runtime'][index])
+            train_loss = errors_dict['train_loss'][index]
+            valid_loss = errors_dict['valid_loss'][index]
+            test_loss = errors_dict['test_loss'][index]
+            train_regret = 100 - errors_dict['train_acc'][index]
+            valid_regret = 100 - errors_dict['valid_acc'][index]
+            test_regret = 100 - errors_dict['test_acc'][index]
+            train_time = errors_dict['train_time'][index]
+            runtime = errors_dict['runtime'][index]
             op_indices = errors_dict['configs'][index]
 
             config = op_indices2config(op_indices).get_dictionary()
@@ -75,7 +83,7 @@ class NASLibRun(Run):
             additional_info = {}
 
             run.add(
-                costs=[train_regret, valid_regret, test_regret, train_time],
+                costs=[train_loss, valid_loss, test_loss, train_regret, valid_regret, test_regret, train_time],
                 config=config,
                 budget=budget,
                 start_time=start_time,
@@ -86,4 +94,21 @@ class NASLibRun(Run):
             )
 
             start_time = end_time
+
+            # since naslib doesn't use any multifidelity method unlike dehb and bohb
+            # we use a trick to be able to compare results to other runs
+            if index == 0:
+                budgets = [2, 7, 22, 66]
+                for budget in budgets:
+                    run.add(
+                        costs=[train_loss, valid_loss, test_loss, train_regret, valid_regret, test_regret, train_time],
+                        config=config,
+                        budget=budget,
+                        start_time=start_time,
+                        end_time=start_time,
+                        status=status,
+                        origin=origin,
+                        additional=additional_info,
+                    )
+
         return run

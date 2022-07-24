@@ -26,7 +26,6 @@ class DEHBRun(Run):
         """
         if self.path is None:
             return ""
-
         return file_to_hash(self.path / "history_dehb.pkl")
 
     @property
@@ -66,9 +65,9 @@ class DEHBRun(Run):
             history = pickle.load(f)
 
         # Define objective of the optimization, this is needed for DeepCAVE
-        obj1 = Objective("Train loss", lower=0, upper=100)
-        obj2 = Objective("Validation loss", lower=0, upper=100)
-        obj3 = Objective("Test loss", lower=0, upper=100)
+        obj1 = Objective("Train loss", lower=0)
+        obj2 = Objective("Validation loss", lower=0)
+        obj3 = Objective("Test loss", lower=0)
         obj4 = Objective("Train regret", lower=0, upper=100)
         obj5 = Objective("Validation regret", lower=0, upper=100)
         obj6 = Objective("Test regret", lower=0, upper=100)
