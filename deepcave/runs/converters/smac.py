@@ -46,6 +46,15 @@ class SMACRun(Run):
         # Only lock lower
         objective1 = Objective("Cost", lower=0)
         objective2 = Objective("Time", lower=0)
+        obj1 = Objective("Validation accuracy", lower=0, upper=100)
+        obj2 = Objective("Validation loss", lower=0, upper=100)
+        obj3 = Objective("Test accuracy", lower=0, upper=100)
+        obj4 = Objective("Test loss", lower=0, upper=100)
+        obj5 = Objective("Train accuracy", lower=0, upper=100)
+        obj6 = Objective("Train loss", lower=0, upper=100)
+        obj7 = Objective("Train time", lower=0)
+        obj8 = Objective("Seed")
+        objectives = [obj1, objective2, obj2, obj3, obj4, obj5, obj6, obj7]
 
         # Read meta
         # Everything else is ignored
@@ -66,7 +75,7 @@ class SMACRun(Run):
 
         # Let's create a new run object
         run = SMACRun(
-            name=path.stem, configspace=configspace, objectives=[objective1, objective2], meta=meta
+            name=path.stem, configspace=configspace, objectives=objectives, meta=meta
         )
 
         # We have to set the path manually
@@ -78,6 +87,18 @@ class SMACRun(Run):
             data = all_data["data"]
             config_origins = all_data["config_origins"]
             configs = all_data["configs"]
+
+        with (path / "run_history.json").open() as json_file:
+            listObj = json.load(json_file)
+            for instance in listObj:
+                train_acc = instance['train_acc']
+                val_acc = instance['val_acc']
+                test_acc = instance['test_acc']
+                train_loss = instance['train_loss']
+                val_loss = instance['val_loss']
+                test_loss = instance['test_loss']
+                train_time = instance['train_time']
+                budget = instance['budget']
 
         instance_ids = []
 
@@ -135,17 +156,23 @@ class SMACRun(Run):
                 time = endtime - starttime
 
             # Round budget
-            budget = np.round(budget, 2)
+            budget = round(budget)
 
             run.add(
-                costs=[cost, time],
+                costs=[val_acc, time,
+                       val_loss,
+                       test_acc,
+                       test_loss,
+                       train_acc,
+                       train_loss,
+                       train_time],
                 config=config,
                 budget=budget,
                 start_time=starttime,
                 end_time=endtime,
                 status=status,
                 origin=config_origins[config_id],
-                additional=additional_info,
+                additional=seed,
             )
 
         return run
