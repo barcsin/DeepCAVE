@@ -8,8 +8,8 @@ import ConfigSpace
 import ConfigSpace.util
 import numpy as np
 
-from deepcave.runs.run import Run
 from deepcave import Objective
+from deepcave.runs.run import Run
 from deepcave.utils.hash import file_to_hash
 
 

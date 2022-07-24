@@ -1,7 +1,7 @@
 # Currently to get this converter to work with deepCAVE we need to put this file into deepcave/runs/converters
 # then in deepcave/config.py import the NASLibRun class and add it to the list in CONVERTERS property
-from pathlib import Path
 import json
+from pathlib import Path
 
 from deepcave.runs import Status
 from deepcave.runs.objective import Objective
