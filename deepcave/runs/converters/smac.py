@@ -44,17 +44,16 @@ class SMACRun(Run):
         # Read objectives
         # We have to define it ourselves, because we don't know the type of the objective
         # Only lock lower
-        objective1 = Objective("Cost", lower=0)
-        objective2 = Objective("Time", lower=0)
-        obj1 = Objective("Validation accuracy", lower=0, upper=100)
-        obj2 = Objective("Validation loss", lower=0, upper=100)
-        obj3 = Objective("Test accuracy", lower=0, upper=100)
-        obj4 = Objective("Test loss", lower=0, upper=100)
-        obj5 = Objective("Train accuracy", lower=0, upper=100)
-        obj6 = Objective("Train loss", lower=0, upper=100)
+        # objective1 = Objective("Cost", lower=0)
+        # objective2 = Objective("Time", lower=0)
+        obj6 = Objective("Train loss", lower=0)
+        obj2 = Objective("Validation loss", lower=0)
+        obj4 = Objective("Test loss", lower=0)
+        obj5 = Objective("Train regret", lower=0, upper=100)
+        obj1 = Objective("Validation regret", lower=0, upper=100)
+        obj3 = Objective("Test regret", lower=0, upper=100)
         obj7 = Objective("Train time", lower=0)
-        obj8 = Objective("Seed")
-        objectives = [obj1, objective2, obj2, obj3, obj4, obj5, obj6, obj7]
+        objectives = [obj1, obj2, obj3, obj4, obj5, obj6, obj7]
 
         # Read meta
         # Everything else is ignored
@@ -159,12 +158,12 @@ class SMACRun(Run):
             budget = round(budget)
 
             run.add(
-                costs=[val_acc, time,
-                       val_loss,
-                       test_acc,
+                costs=[train_loss,
+                       valid_loss,
                        test_loss,
-                       train_acc,
-                       train_loss,
+                       train_regret,
+                       valid_regret,
+                       test_regret,
                        train_time],
                 config=config,
                 budget=budget,
