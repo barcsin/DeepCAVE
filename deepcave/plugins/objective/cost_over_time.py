@@ -133,7 +133,7 @@ class CostOverTime(DynamicPlugin):
 
     @staticmethod
     def process(run, inputs):
-        budget = run.get_budget(4)
+        budget = run.get_budget(inputs["budget_id"])
         objective = run.get_objective(inputs["objective_id"])
 
         times, costs_mean, costs_std, ids, config_ids = run.get_trajectory(
