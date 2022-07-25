@@ -233,8 +233,8 @@ class Run(AbstractRun, ABC):
             config_id=config_id,
             budget=budget,
             costs=costs,
-            start_time=np.round(start_time, 2),
-            end_time=np.round(end_time, 2),
+            start_time=float(np.round(start_time, 2)),
+            end_time=float(np.round(end_time, 2)),
             status=status,
             additional=additional,
         )
