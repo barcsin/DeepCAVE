@@ -620,7 +620,7 @@ class AbstractRun(ABC):
         return torch.load(filename)
 
     def get_trajectory(
-        self, objective: Objective, budget: Optional[Union[int, float]] = None
+        self, objective: Objective, budget: Optional[Union[int, float]] = None, report_improvement: bool = False
     ) -> Tuple[List[float], List[float], List[float], List[int], List[int]]:
         """
         Calculates the trajectory of the given objective and budget.
@@ -664,7 +664,7 @@ class AbstractRun(ABC):
             order.append((id, trial.end_time))
 
         order.sort(key=lambda tup: tup[1])
-
+        # print(order)
         # Important: Objective can be minimized or maximized
         if objective.optimize == "lower":
             current_cost = np.inf
@@ -689,7 +689,7 @@ class AbstractRun(ABC):
                 improvement = cost < current_cost
             else:
                 improvement = cost > current_cost
-
+            improvement = True if report_improvement is False else improvement
             if improvement:
                 current_cost = cost
 

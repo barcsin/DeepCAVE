@@ -37,6 +37,8 @@ class CostOverTime(DynamicPlugin):
         budget_ids = run.get_budget_ids()
         self.budget_options = get_select_options(budgets, budget_ids)
 
+        self.improvement_options = get_select_options(binary=True)
+
     @staticmethod
     def get_input_layout(register):
         return [
@@ -62,6 +64,19 @@ class CostOverTime(DynamicPlugin):
                             dbc.Select(
                                 id=register("budget_id", ["value", "options"], type=int),
                                 placeholder="Select budget ...",
+                            ),
+                        ],
+                        md=6,
+                    ),
+                    dbc.Col(
+                        [
+                            dbc.Label("Report Improvement"),
+                            help_button(
+                                "Show only the improvements over selected objective"
+                            ),
+                            dbc.Select(
+                                id=register("improvement_only", ["value", "options"], type=bool),
+                                placeholder="Select improvement ...",
                             ),
                         ],
                         md=6,
@@ -119,6 +134,10 @@ class CostOverTime(DynamicPlugin):
                 "options": self.budget_options,
                 "value": self.budget_options[-1]["value"],
             },
+            "improvement_only": {
+                "options": self.improvement_options,
+                "value": self.improvement_options[1]["value"],
+            },
             "xaxis": {
                 "options": [
                     {"label": "Time", "value": "times"},
@@ -137,7 +156,7 @@ class CostOverTime(DynamicPlugin):
         objective = run.get_objective(inputs["objective_id"])
 
         times, costs_mean, costs_std, ids, config_ids = run.get_trajectory(
-            objective=objective, budget=budget
+            objective=objective, budget=budget, report_improvement=inputs["improvement_only"]
         )
 
         return {
