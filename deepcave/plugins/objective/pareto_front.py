@@ -297,7 +297,7 @@ class ParetoFront(DynamicPlugin):
             layout = None
 
         figure = go.Figure(data=traces, layout=layout)
-        save_image(figure, "pareto_front.pdf")
+        save_image(figure, "pareto_front.svg")
 
         return figure
 

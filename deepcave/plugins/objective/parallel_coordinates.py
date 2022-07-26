@@ -278,6 +278,6 @@ class ParallelCoordinates(StaticPlugin):
             ),
             layout=dict(margin=dict(t=150, b=50, l=100, r=0)),
         )
-        save_image(figure, "parallel_coordinates.pdf")
+        save_image(figure, "parallel_coordinates.svg")
 
         return figure

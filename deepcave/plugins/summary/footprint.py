@@ -270,8 +270,8 @@ class FootPrint(StaticPlugin):
         performance = go.Figure(data=[performance_data] + traces, layout=layout)
         area = go.Figure(data=[area_data] + traces, layout=layout)
 
-        save_image(performance, "footprint_performance.pdf")
-        save_image(area, "footprint_area.pdf")
+        save_image(performance, "footprint_performance.svg")
+        save_image(area, "footprint_area.svg")
 
         return [performance, area]
 

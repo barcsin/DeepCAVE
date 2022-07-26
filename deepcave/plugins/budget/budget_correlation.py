@@ -176,7 +176,7 @@ class BudgetCorrelation(DynamicPlugin):
         )
 
         figure = go.Figure(data=traces, layout=layout)
-        save_image(figure, "budget_correlation.png")
+        save_image(figure, "budget_correlation.svg")
 
         # Add vertical lines
         readable_budgets = run.get_budgets(human=True, include_combined=False)

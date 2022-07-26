@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 from typing import Any, Callable, List, Optional, Tuple, Union
 
 import itertools
@@ -26,6 +28,34 @@ logger = get_logger(__name__)
 def save_image(figure: go.Figure, name: str) -> None:
     """
     Saves a plotly figure as an image.
+
+    Parameters
+    ----------
+    fig : go.Figure
+        Plotly figure.
+    name : str
+        Name of the image with extension. Will be automatically saved to the cache.
+    """
+    from deepcave import config
+
+    if not config.SAVE_IMAGES:
+        return
+
+    ratio = 16 / 9
+    width = 500
+    height = int(width / ratio)
+    # Ensures that the folders exists before trying to save
+    Path(config.CACHE_DIR / "figures").mkdir(parents=True, exist_ok=True)
+    path = config.CACHE_DIR / "figures" / name
+
+    figure.write_image(path, width=width, height=height)
+    logger.info(f"Saved figure {name} to {path}.")
+
+
+@interactive
+def save_as_svg(figure: go.Figure, name: str) -> None:
+    """
+    Saves a plotly figure as an SVG.
 
     Parameters
     ----------

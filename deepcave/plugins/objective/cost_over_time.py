@@ -249,6 +249,6 @@ class CostOverTime(DynamicPlugin):
         )
 
         figure = go.Figure(data=traces, layout=layout)
-        save_image(figure, "cost_over_time.pdf")
+        save_image(figure, "cost_over_time.svg")
 
         return figure

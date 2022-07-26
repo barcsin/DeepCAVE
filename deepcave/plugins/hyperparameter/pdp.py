@@ -349,6 +349,6 @@ class PartialDependencies(StaticPlugin):
             )
 
         figure = go.Figure(data=traces, layout=layout)
-        save_image(figure, "pdp.pdf")
+        save_image(figure, "pdp.svg")
 
         return figure

@@ -278,6 +278,6 @@ class ConfigurationCube(DynamicPlugin):
 
         figure = go.Figure(data=trace, layout=layout)
         figure.update_layout(dict(margin=config.FIGURE_MARGIN))
-        save_image(figure, "configuration_cube.pdf")
+        save_image(figure, "configuration_cube.svg")
 
         return figure

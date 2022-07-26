@@ -276,7 +276,7 @@ class Importances(StaticPlugin):
             margin=config.FIGURE_MARGIN,
             xaxis=dict(tickangle=-45),
         )
-        save_image(figure, "importances.pdf")
+        save_image(figure, "importances.svg")
 
         return figure
 

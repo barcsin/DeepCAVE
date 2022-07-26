@@ -331,7 +331,7 @@ class Overview(DynamicPlugin):
             margin=config.FIGURE_MARGIN,
         )
         stats_figure = go.Figure(data=stats_data, layout=stats_layout)
-        save_image(stats_figure, "status_bar.pdf")
+        save_image(stats_figure, "status_bar.svg")
 
         config_layout = go.Layout(
             legend={"title": "Status"},
@@ -348,7 +348,7 @@ class Overview(DynamicPlugin):
             ),
             layout=config_layout,
         )
-        save_image(config_figure, "status_heatmap.pdf")
+        save_image(config_figure, "status_heatmap.svg")
 
         return [
             card,

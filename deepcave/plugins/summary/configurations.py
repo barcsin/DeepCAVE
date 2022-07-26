@@ -261,7 +261,7 @@ class Configurations(DynamicPlugin):
 
         objective_layout = go.Layout(**layout_kwargs)
         objective_figure = go.Figure(data=objective_data, layout=objective_layout)
-        save_image(objective_figure, "configure.pdf")
+        save_image(objective_figure, "configure.svg")
 
         return objective_figure
 
