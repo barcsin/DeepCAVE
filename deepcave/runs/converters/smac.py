@@ -53,7 +53,7 @@ class SMACRun(Run):
         obj5 = Objective("Validation regret", lower=0, upper=100)
         obj6 = Objective("Test regret", lower=0, upper=100)
         obj7 = Objective("Train time", lower=0)
-        objectives = [obj2, obj3, obj4, obj5, obj6, obj7]
+        objectives = [obj1, obj2, obj3, obj4, obj5, obj6, obj7]
         #objectives = [objective1, objective2]
 
         #objectives = [obj4, obj5]
@@ -174,7 +174,7 @@ class SMACRun(Run):
             print('Val regret:', valid_regret)
             print('train time', train_time)
             run.add(
-                costs=[valid_loss, test_loss, train_regret, valid_regret, test_regret, train_time],
+                costs=[train_loss, valid_loss, test_loss, train_regret, valid_regret, test_regret, train_time],
                 config=config,
                 budget=budget,
                 start_time=starttime,
