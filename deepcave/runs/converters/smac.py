@@ -44,8 +44,8 @@ class SMACRun(Run):
         # Read objectives
         # We have to define it ourselves, because we don't know the type of the objective
         # Only lock lower
-        # objective1 = Objective("Cost", lower=0)
-        # objective2 = Objective("Time", lower=0)
+        objective1 = Objective("Cost", lower=0)
+        objective2 = Objective("Time", lower=0)
         obj1 = Objective("Train loss", lower=0)
         obj2 = Objective("Validation loss", lower=0)
         obj3 = Objective("Test loss", lower=0)
@@ -53,7 +53,10 @@ class SMACRun(Run):
         obj5 = Objective("Validation regret", lower=0, upper=100)
         obj6 = Objective("Test regret", lower=0, upper=100)
         obj7 = Objective("Train time", lower=0)
-        objectives = [obj1, obj2, obj3, obj4, obj5, obj6, obj7]
+        objectives = [obj2, obj3, obj4, obj5, obj6, obj7]
+        #objectives = [objective1, objective2]
+
+        #objectives = [obj4, obj5]
 
         # Read meta
         # Everything else is ignored
@@ -87,30 +90,35 @@ class SMACRun(Run):
             config_origins = all_data["config_origins"]
             configs = all_data["configs"]
 
-        with (path / "run_history.json").open() as json_file:
+        with (path / "run_history.json").open("r") as json_file:
             listObj = json.load(json_file)
-            for instance in listObj:
-                train_regret = instance['train_acc']
-                valid_regret = instance['val_acc']
-                test_regret = instance['test_acc']
-                train_loss = instance['train_loss']
-                valid_loss = instance['val_loss']
-                test_loss = instance['test_loss']
-                train_time = instance['train_time']
-                budget = instance['budget']
 
         instance_ids = []
 
         first_starttime = None
         seeds = []
-        for (config_id, instance_id, seed, budget), (
-            cost,
-            time,
-            status,
-            starttime,
-            endtime,
-            additional_info,
-        ) in data:
+        for (info, details), (d) in zip(data, listObj):
+            config_id = info[0]
+            instance_id = info[1]
+            seed = info[2]
+            budget = info[3]
+
+            cost = details[0]
+            time = details[1]
+            status = details[2]
+            starttime = details[3]
+            endtime = details[4]
+            additional_info = details[5]
+
+            train_regret = d['train_acc']
+            valid_regret = d['val_acc']
+            test_regret = d['test_acc']
+            train_loss = d['train_loss']
+            valid_loss = d['val_loss']
+            test_loss = d['test_loss']
+            train_time = d['train_time']
+            #budget = d['budget']
+
             if instance_id not in instance_ids:
                 instance_ids += [instance_id]
 
@@ -129,8 +137,11 @@ class SMACRun(Run):
             if first_starttime is None:
                 first_starttime = starttime
 
+            print('first time:', first_starttime)
             starttime = starttime - first_starttime
-            endtime = endtime - first_starttime
+            print('start time:', starttime)
+            # endtime = endtime - first_starttime
+            # print('end time:', endtime)
 
             status = status["__enum__"]
 
@@ -157,15 +168,13 @@ class SMACRun(Run):
             # Round budget
             budget = round(budget)
             endtime = starttime + train_time
+            print('train time:', train_time)
+            print('end time:', endtime)
 
+            print('Val regret:', valid_regret)
+            print('train time', train_time)
             run.add(
-                costs=[train_loss,
-                           valid_loss,
-                           test_loss,
-                           train_regret,
-                           valid_regret,
-                           test_regret,
-                           train_time],
+                costs=[valid_loss, test_loss, train_regret, valid_regret, test_regret, train_time],
                 config=config,
                 budget=budget,
                 start_time=starttime,
@@ -174,7 +183,5 @@ class SMACRun(Run):
                 origin=config_origins[config_id],
                 additional=additional_info,
             )
-
-            starttime = endtime
-
+        starttime = endtime
         return run
