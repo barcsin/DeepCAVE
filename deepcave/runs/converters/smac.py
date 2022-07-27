@@ -52,9 +52,6 @@ class SMACRun(Run):
         obj6 = Objective("Test regret", lower=0, upper=100)
         obj7 = Objective("Train time", lower=0)
         objectives = [obj1, obj2, obj3, obj4, obj5, obj6, obj7]
-        #objectives = [objective1, objective2]
-
-        #objectives = [obj4, obj5]
 
         # Read meta
         # Everything else is ignored
@@ -81,14 +78,14 @@ class SMACRun(Run):
         # We have to set the path manually
         run._path = path
 
-        # Iterate over custom runhistory produced with extended smac trainer
+        # Iterate over the runhistory
         with (path / "runhistory.json").open() as json_file:
             all_data = json.load(json_file)
             data = all_data["data"]
             config_origins = all_data["config_origins"]
             configs = all_data["configs"]
 
-        # Iterate over the runhistory
+        # Iterate over custom runhistory produced with extended smac trainer
         with (path / "run_history.json").open("r") as json_file:
             listObj = json.load(json_file)
 
@@ -104,9 +101,6 @@ class SMACRun(Run):
             # cost = details[0]
             status = details[2]
             additional_info = details[5]
-            print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
-            print(d)
-            print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
             train_regret = d['train_acc']
             valid_regret = d['val_acc']
             test_regret = d['test_acc']
