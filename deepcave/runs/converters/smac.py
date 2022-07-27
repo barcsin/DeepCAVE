@@ -44,8 +44,6 @@ class SMACRun(Run):
         # Read objectives
         # We have to define it ourselves, because we don't know the type of the objective
         # Only lock lower
-        objective1 = Objective("Cost", lower=0)
-        objective2 = Objective("Time", lower=0)
         obj1 = Objective("Train loss", lower=0)
         obj2 = Objective("Validation loss", lower=0)
         obj3 = Objective("Test loss", lower=0)
@@ -77,25 +75,25 @@ class SMACRun(Run):
 
         # Let's create a new run object
         run = SMACRun(
-            name=path.stem, configspace=configspace, objectives=objectives, meta=meta
+            name=path.stem, configspace=configspace, objectives=objectives, meta={}
         )
 
         # We have to set the path manually
         run._path = path
 
-        # Iterate over the runhistory
+        # Iterate over custom runhistory produced with extended smac trainer
         with (path / "runhistory.json").open() as json_file:
             all_data = json.load(json_file)
             data = all_data["data"]
             config_origins = all_data["config_origins"]
             configs = all_data["configs"]
 
+        # Iterate over the runhistory
         with (path / "run_history.json").open("r") as json_file:
             listObj = json.load(json_file)
 
         instance_ids = []
-
-        first_starttime = None
+        start_time = 0
         seeds = []
         for (info, details), (d) in zip(data, listObj):
             config_id = info[0]
@@ -103,13 +101,12 @@ class SMACRun(Run):
             seed = info[2]
             budget = info[3]
 
-            cost = details[0]
-            time = details[1]
+            # cost = details[0]
             status = details[2]
-            starttime = details[3]
-            endtime = details[4]
             additional_info = details[5]
-
+            print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+            print(d)
+            print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
             train_regret = d['train_acc']
             valid_regret = d['val_acc']
             test_regret = d['test_acc']
@@ -134,15 +131,6 @@ class SMACRun(Run):
             if len(seeds) > 1:
                 raise RuntimeError("Multiple seeds are not supported.")
 
-            if first_starttime is None:
-                first_starttime = starttime
-
-            print('first time:', first_starttime)
-            starttime = starttime - first_starttime
-            print('start time:', starttime)
-            # endtime = endtime - first_starttime
-            # print('end time:', endtime)
-
             status = status["__enum__"]
 
             if "SUCCESS" in status:
@@ -158,30 +146,20 @@ class SMACRun(Run):
             else:
                 status = Status.CRASHED
 
-            if status != Status.SUCCESS:
-                # We don't want cost included which are failed
-                cost = None
-                time = None
-            else:
-                time = endtime - starttime
-
             # Round budget
             budget = round(budget)
-            endtime = starttime + train_time
-            print('train time:', train_time)
-            print('end time:', endtime)
+            endtime = start_time + train_time
 
-            print('Val regret:', valid_regret)
-            print('train time', train_time)
             run.add(
                 costs=[train_loss, valid_loss, test_loss, train_regret, valid_regret, test_regret, train_time],
                 config=config,
                 budget=budget,
-                start_time=starttime,
+                start_time=start_time,
                 end_time=endtime,
-                status=status,
                 origin=config_origins[config_id],
                 additional=additional_info,
             )
-        starttime = endtime
+            start_time = endtime
+
         return run
+
