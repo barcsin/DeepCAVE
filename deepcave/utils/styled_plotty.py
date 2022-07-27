@@ -52,32 +52,6 @@ def save_image(figure: go.Figure, name: str) -> None:
     logger.info(f"Saved figure {name} to {path}.")
 
 
-@interactive
-def save_as_svg(figure: go.Figure, name: str) -> None:
-    """
-    Saves a plotly figure as an SVG.
-
-    Parameters
-    ----------
-    fig : go.Figure
-        Plotly figure.
-    name : str
-        Name of the image with extension. Will be automatically saved to the cache.
-    """
-    from deepcave import config
-
-    if not config.SAVE_IMAGES:
-        return
-
-    ratio = 16 / 9
-    width = 500
-    height = int(width / ratio)
-    path = config.CACHE_DIR / "figures" / name
-
-    figure.write_image(path, width=width, height=height)
-    logger.info(f"Saved figure {name} to {path}.")
-
-
 def hex_to_rgb(hex_string: str) -> Tuple[int, int, int]:
     """
     Converts a hex_string to a tuple of rgb values.
