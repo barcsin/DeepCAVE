@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional, Union, List
 
 import time
 from pathlib import Path
@@ -113,7 +113,7 @@ class Recorder:
 
     def end(
         self,
-        costs: float = np.inf,
+        costs: List[float] = np.inf,
         status: Status = Status.SUCCESS,
         config: Union[dict, Configuration] = None,
         budget: float = np.inf,
