@@ -140,7 +140,7 @@ class Group(AbstractRun):
         run_id, config_id = self._original_config_mapping[config_id]
         return self.runs[run_id].get_model(config_id)
 
-    def get_trajectory(self, *args, **kwargs):
+    def get_trajectory(self, plot_std=False, *args, **kwargs):
         # Cache costs
         run_costs = []
         run_times = []
@@ -182,6 +182,11 @@ class Group(AbstractRun):
 
         times = all_times
         costs_mean = np.mean(all_costs, axis=1)
-        costs_std = np.std(all_costs, axis=1)
 
-        return times, list(costs_mean), list(costs_std), [], []
+        if plot_std:
+            costs_std = np.std(all_costs, axis=1)
+        else:
+            # Avoids plotting standard deviation around the graphs
+            costs_std = np.zeros_like(costs_mean).tolist()
+
+        return times, list(costs_mean), costs_std, [], []
