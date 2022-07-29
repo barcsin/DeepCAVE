@@ -41,8 +41,8 @@ def save_image(figure: go.Figure, name: str) -> None:
     if not config.SAVE_IMAGES:
         return
 
-    ratio = 21 / 9
-    width = 1800
+    ratio = 16 / 9
+    width = 1000
     height = int(width / ratio)
 
     path = Path(config.CACHE_DIR / "figures")
