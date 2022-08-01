@@ -184,7 +184,7 @@ class CostOverTime(DynamicPlugin):
 
         traces = []
         groups = []
-        datasets = ["cifar100", "cifar10" "ImageNet16-120"]
+        datasets = ["cifar100", "cifar10", "ImageNet16-120"]
         for idx, run in enumerate(runs):
             if run.prefix == "group":
                 groups.append(str(run.name))
