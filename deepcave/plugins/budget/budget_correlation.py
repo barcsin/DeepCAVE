@@ -196,7 +196,7 @@ class BudgetCorrelation(DynamicPlugin):
         else:
             dataset = [dataset for dataset in datasets if dataset in str(Path(run.path))]
 
-        figure.update_layout(title={"text": f"Budget correlation on {dataset[0]} dataset",
+        figure.update_layout(title={"text": f"Budget correlation on \n{dataset[0]} dataset",
                                     "xanchor": "center", 'yanchor': 'top', "x": 0.5, "y": 0.99},
                              font=dict(
                                  size=18,
