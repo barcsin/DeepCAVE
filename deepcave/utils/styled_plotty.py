@@ -1,9 +1,9 @@
-import os
-from pathlib import Path
 from typing import Any, Callable, List, Optional, Tuple, Union
 
 import itertools
+import os
 import re
+from pathlib import Path
 
 import numpy as np
 import plotly.express as px

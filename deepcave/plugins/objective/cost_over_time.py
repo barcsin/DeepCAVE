@@ -1,5 +1,6 @@
-from pathlib import Path
 from typing import List
+
+from pathlib import Path
 
 import dash_bootstrap_components as dbc
 import numpy as np

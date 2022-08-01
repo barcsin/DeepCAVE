@@ -1,10 +1,11 @@
 from typing import List, Union
 
+from pathlib import Path
+
 import dash_bootstrap_components as dbc
 import numpy as np
 import plotly.graph_objs as go
 from dash import dcc, html
-from pathlib import Path
 
 from deepcave import config
 from deepcave.plugins.dynamic import DynamicPlugin

@@ -1,12 +1,12 @@
 from typing import Dict
 
 from collections import defaultdict
+from pathlib import Path
 
 import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
 from dash import dcc, html
 from scipy import stats
-from pathlib import Path
 
 from deepcave import config, notification
 from deepcave.plugins.dynamic import DynamicPlugin
