@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import List
 
 import dash_bootstrap_components as dbc
@@ -181,7 +182,15 @@ class CostOverTime(DynamicPlugin):
             return go.Figure()
 
         traces = []
+        groups = []
+        datasets = ["cifar100", "cifar10" "ImageNet16-120"]
         for idx, run in enumerate(runs):
+            if run.prefix == "group":
+                groups.append(str(run.name))
+                dataset = [dataset for dataset in datasets if dataset in str(Path(run.run_paths[0]))]
+            else:
+                print(run.path)
+                dataset = [dataset for dataset in datasets if dataset in str(Path(run.path))]
             if run.prefix == "group" and not show_groups:
                 continue
 
@@ -268,6 +277,13 @@ class CostOverTime(DynamicPlugin):
         )
 
         figure = go.Figure(data=traces, layout=layout)
-        save_image(figure, "cost_over_time.svg")
+        figure.update_layout(title={"text": f"Cost over time on {dataset[0]} dataset",
+                                    "xanchor": "center", 'yanchor': 'top', "x": 0.5, "y": 0.99},
+                             font=dict(
+                                 size=18,
+                             )
+                             )
+        name_extra = "_".join(groups)
+        save_image(figure, f"cost_over_time_{name_extra}.svg")
 
         return figure

@@ -6,6 +6,7 @@ import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
 from dash import dcc, html
 from scipy import stats
+from pathlib import Path
 
 from deepcave import config, notification
 from deepcave.plugins.dynamic import DynamicPlugin
@@ -176,7 +177,7 @@ class BudgetCorrelation(DynamicPlugin):
         )
 
         figure = go.Figure(data=traces, layout=layout)
-        save_image(figure, "budget_correlation.svg")
+
 
         # Add vertical lines
         readable_budgets = run.get_budgets(human=True, include_combined=False)
@@ -189,6 +190,21 @@ class BudgetCorrelation(DynamicPlugin):
                     dash="dot",
                 ),
             )
+        datasets = ["cifar100", "cifar10" "ImageNet16-120"]
+        if run.prefix == "group":
+            dataset = [dataset for dataset in datasets if dataset in str(Path(run.run_paths[0]))]
+        else:
+            dataset = [dataset for dataset in datasets if dataset in str(Path(run.path))]
+
+        figure.update_layout(title={"text": f"Budget correlation on {dataset[0]} dataset",
+                                    "xanchor": "center", 'yanchor': 'top', "x": 0.5, "y": 0.99},
+                             font=dict(
+                                 size=18,
+                             )
+                             )
+        groups = [run.name]
+        name_extra = "_".join(groups)
+        save_image(figure, f"budget_correlation{name_extra}.svg")
 
         text = "The budget correlation of"
         n_categories = len(categories)

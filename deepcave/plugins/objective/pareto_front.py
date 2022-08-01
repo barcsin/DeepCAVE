@@ -4,6 +4,7 @@ import dash_bootstrap_components as dbc
 import numpy as np
 import plotly.graph_objs as go
 from dash import dcc, html
+from pathlib import Path
 
 from deepcave import config
 from deepcave.plugins.dynamic import DynamicPlugin
@@ -213,10 +214,16 @@ class ParetoFront(DynamicPlugin):
         show_all = inputs["show_all"]
 
         traces = []
+        groups = []
+        datasets = ["cifar100", "cifar10" "ImageNet16-120"]
         for idx, run in enumerate(runs):
             show_runs = inputs["show_runs"]
             show_groups = inputs["show_groups"]
-
+            if run.prefix == "group":
+                groups.append(str(run.name))
+                dataset = [dataset for dataset in datasets if dataset in str(Path(run.run_paths[0]))]
+            else:
+                dataset = [dataset for dataset in datasets if dataset in str(Path(run.path))]
             if run.prefix == "group" and not show_groups:
                 continue
 
@@ -297,7 +304,16 @@ class ParetoFront(DynamicPlugin):
             layout = None
 
         figure = go.Figure(data=traces, layout=layout)
-        save_image(figure, "pareto_front.svg")
+
+        figure.update_layout(title={"text": f"Pareto front on {dataset[0]} dataset",
+                                    "xanchor": "center", 'yanchor': 'top', "x": 0.5, "y": 0.99},
+                             font=dict(
+                                 size=18,
+                             )
+                             )
+
+        name_extra = "_".join(groups)
+        save_image(figure, f"pareto_front_{name_extra}.svg")
 
         return figure
 

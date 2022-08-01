@@ -44,13 +44,16 @@ def save_image(figure: go.Figure, name: str) -> None:
     ratio = 16 / 9
     width = 1000
     height = int(width / ratio)
-
+    name = name[:-3] + "png"
     path = Path(config.CACHE_DIR / "figures")
     # Ensures that the folders exist before trying to save
     path.mkdir(parents=True, exist_ok=True)
     path = path / name
 
-    figure.write_image(path, width=width, height=height)
+    figure.update_layout(font=dict(size=18))
+
+    # figure.write_image(path, width=width, height=height)
+    figure.write_image(path, width=width, height=height, scale=1.0)
     logger.info(f"Saved figure {name} to {path}.")
 
 
