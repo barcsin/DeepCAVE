@@ -306,8 +306,8 @@ class ParetoFront(DynamicPlugin):
 
         figure = go.Figure(data=traces, layout=layout)
 
-        figure.update_layout(title={"text": f"Pareto front on \n{dataset[0]} dataset",
-                                    "xanchor": "center", 'yanchor': 'top', "x": 0.5, "y": 0.99},
+        figure.update_layout(title={"text": f"Pareto front on <br>{dataset[0].upper()}",
+                                    "xanchor": "center", 'yanchor': 'top', "x": 0.5, "y": 0.9},
                              font=dict(
                                  size=18,
                              )

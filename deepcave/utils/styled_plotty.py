@@ -41,7 +41,7 @@ def save_image(figure: go.Figure, name: str, ignore_titles = False) -> None:
     if not config.SAVE_IMAGES:
         return
 
-    ratio = 16 / 9
+    ratio = 14 / 9
     width = 1000
     height = int(width / ratio)
     name = name[:-3] + "png"
