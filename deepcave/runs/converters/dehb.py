@@ -8,8 +8,8 @@ import ConfigSpace
 import ConfigSpace.util
 import numpy as np
 
-from deepcave import Objective
 from deepcave.runs.run import Run
+from deepcave import Objective
 from deepcave.utils.hash import file_to_hash
 
 
@@ -26,6 +26,7 @@ class DEHBRun(Run):
         """
         if self.path is None:
             return ""
+
         return file_to_hash(self.path / "history_dehb.pkl")
 
     @property
@@ -64,6 +65,20 @@ class DEHBRun(Run):
         with open(path / "history_dehb.pkl", "rb") as f:
             history = pickle.load(f)
 
+        # TODO This code should be removed later
+        # Temporary solution for tracking the time it takes for DEHB to search for an architecture
+        # (including querying the benchmark). This will get added to training time in order to accumulate the whole
+        # optimization time instead of just the training time.
+        # Go through the log file and extract the seconds it took to search for an architecture.
+        search_times = []
+        import os
+        for file in os.listdir(path):
+            if file.endswith(".log"):
+                with open(path / file, "rb") as f:
+                    for line in f:
+                        if 'seconds' in line:
+                            search_times.append(line.split('/')[0].split(' ')[-1])
+
         # Define objective of the optimization, this is needed for DeepCAVE
         obj1 = Objective("Train loss", lower=0)
         obj2 = Objective("Validation loss", lower=0)
@@ -84,7 +99,7 @@ class DEHBRun(Run):
         # like the picked architecture and its evaluated performance with additional information.
         # Let's loop through the history of the optimization run to extract this information and add it one-by-one
         # to the run object we just defined
-        for result in history:
+        for idx, result in enumerate(history):
             # DEHB represents a configuration as a list of continuous values in the range (0, 1), called vector
             dehb_vector = result[0]
             valid_regret = result[1]
@@ -99,7 +114,7 @@ class DEHBRun(Run):
 
             config = cls.vector_to_configspace(dehb_vector, configspace)
             # Simulate train time
-            end_time = start_time + train_time
+            end_time = start_time + train_time + search_times[idx]
 
             run.add(costs=[train_loss,
                            valid_loss,
