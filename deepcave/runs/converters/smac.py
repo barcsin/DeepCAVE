@@ -100,6 +100,8 @@ class SMACRun(Run):
 
             # cost = details[0]
             status = details[2]
+            starttime = details[3]
+            endtime = details[4]
             additional_info = details[5]
             train_regret = d['train_acc']
             valid_regret = d['val_acc']
@@ -142,14 +144,16 @@ class SMACRun(Run):
 
             # Round budget
             budget = round(budget)
-            endtime = start_time + train_time
+            # print('training time:', (start_time + train_time))
+            # print('inference time:', (endtime - starttime))
+            end_time = start_time + train_time + (endtime - starttime)
 
             run.add(
                 costs=[train_loss, valid_loss, test_loss, train_regret, valid_regret, test_regret, train_time],
                 config=config,
                 budget=budget,
                 start_time=start_time,
-                end_time=endtime,
+                end_time=end_time,
                 origin=config_origins[config_id],
                 additional=additional_info,
             )
