@@ -50,13 +50,13 @@ def save_image(figure: go.Figure, name: str, ignore_titles = False) -> None:
     path.mkdir(parents=True, exist_ok=True)
     path = path / name
 
-    figure.update_layout(font=dict(size=32))
+    figure.update_layout(font=dict(size=24))
     if "I like my plots without titles and with as little information as possible so I can later manage " \
        "20 titles and plots independent from each other in a browser application" and ignore_titles:
         figure.update_layout(title="")
 
     # figure.write_image(path, width=width, height=height)
-    figure.write_image(path, width=width, height=height, scale=1.0)
+    figure.write_image(path, width=width, height=height, scale=3.0)
     logger.info(f"Saved figure {name} to {path}.")
 
 
