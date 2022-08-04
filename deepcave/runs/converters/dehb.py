@@ -74,10 +74,11 @@ class DEHBRun(Run):
         import os
         for file in os.listdir(path):
             if file.endswith(".log"):
-                with open(path / file, "rb") as f:
+                with open(path / file, "r") as f:
                     for line in f:
                         if 'seconds' in line:
-                            search_times.append(line.split('/')[0].split(' ')[-1])
+                            search_times.append(float(line.split('/')[0].split(' ')[-1]))
+
 
         # Define objective of the optimization, this is needed for DeepCAVE
         obj1 = Objective("Train loss", lower=0)
@@ -93,12 +94,12 @@ class DEHBRun(Run):
         run = DEHBRun(path.stem, configspace=configspace, objectives=objectives, meta={})
         # Remember to set the path of the Run manually
         run._path = path
-
         start_time = 0
         # A single step taken by the optimizer results in several important information that is stored in history,
         # like the picked architecture and its evaluated performance with additional information.
         # Let's loop through the history of the optimization run to extract this information and add it one-by-one
         # to the run object we just defined
+        search_time = search_times[0]
         for idx, result in enumerate(history):
             # DEHB represents a configuration as a list of continuous values in the range (0, 1), called vector
             dehb_vector = result[0]
@@ -114,7 +115,11 @@ class DEHBRun(Run):
 
             config = cls.vector_to_configspace(dehb_vector, configspace)
             # Simulate train time
-            end_time = start_time + train_time + search_times[idx]
+
+            if idx > 0:
+                search_time = search_times[idx] - search_times[idx-1]
+
+            end_time = start_time + train_time + search_time
 
             run.add(costs=[train_loss,
                            valid_loss,
