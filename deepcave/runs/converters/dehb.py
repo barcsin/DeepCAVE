@@ -65,21 +65,6 @@ class DEHBRun(Run):
         with open(path / "history_dehb.pkl", "rb") as f:
             history = pickle.load(f)
 
-        # TODO This code should be removed later
-        # Temporary solution for tracking the time it takes for DEHB to search for an architecture
-        # (including querying the benchmark). This will get added to training time in order to accumulate the whole
-        # optimization time instead of just the training time.
-        # Go through the log file and extract the seconds it took to search for an architecture.
-        search_times = []
-        import os
-        for file in os.listdir(path):
-            if file.endswith(".log"):
-                with open(path / file, "r") as f:
-                    for line in f:
-                        if 'seconds' in line:
-                            search_times.append(float(line.split('/')[0].split(' ')[-1]))
-
-
         # Define objective of the optimization, this is needed for DeepCAVE
         obj1 = Objective("Train loss", lower=0)
         obj2 = Objective("Validation loss", lower=0)
@@ -99,7 +84,6 @@ class DEHBRun(Run):
         # like the picked architecture and its evaluated performance with additional information.
         # Let's loop through the history of the optimization run to extract this information and add it one-by-one
         # to the run object we just defined
-        search_time = search_times[0]
         for idx, result in enumerate(history):
             # DEHB represents a configuration as a list of continuous values in the range (0, 1), called vector
             dehb_vector = result[0]
@@ -116,10 +100,7 @@ class DEHBRun(Run):
             config = cls.vector_to_configspace(dehb_vector, configspace)
             # Simulate train time
 
-            if idx > 0:
-                search_time = search_times[idx] - search_times[idx-1]
-
-            end_time = start_time + train_time + search_time
+            end_time = start_time + train_time
 
             run.add(costs=[train_loss,
                            valid_loss,
