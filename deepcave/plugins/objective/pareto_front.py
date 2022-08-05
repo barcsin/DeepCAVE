@@ -216,7 +216,7 @@ class ParetoFront(DynamicPlugin):
 
         traces = []
         groups = []
-        datasets = ["cifar100", "cifar10" "ImageNet16-120"]
+        datasets = ["cifar100", "cifar10", "ImageNet16-120"]
         for idx, run in enumerate(runs):
             show_runs = inputs["show_runs"]
             show_groups = inputs["show_groups"]
