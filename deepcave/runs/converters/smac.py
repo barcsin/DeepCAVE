@@ -146,7 +146,7 @@ class SMACRun(Run):
             budget = round(budget)
             # print('training time:', (start_time + train_time))
             # print('inference time:', (endtime - starttime))
-            end_time = start_time + train_time + (search_end_time - search_start_time)
+            end_time = start_time + train_time
 
             run.add(
                 costs=[train_loss, valid_loss, test_loss, train_regret, valid_regret, test_regret, train_time],
